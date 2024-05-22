@@ -28,7 +28,7 @@ async function run() {
     await client.connect();
 
 
-
+    //Create
     const spotCollection = client.db('spotDB').collection('spot');
 
     app.post('/spot', async (req, res) => {
@@ -39,13 +39,14 @@ async function run() {
     })
 
 
+    //Read
     app.get('/spot', async (req, res) => {
       const cursor = spotCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     })
 
-    
+    //Delete
     app.delete('/spot/:id', async(req, res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
@@ -54,7 +55,39 @@ async function run() {
     })
 
 
-    
+    //Update
+    app.get('/spot/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await spotCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/spot/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = {upsert: true };
+      const updatedPage = req.body;
+
+      const spots = {
+        $set: {
+          spot: updatedPage.spot,
+          photo: updatedPage.photo,
+          supplier: updatedPage.supplier,
+          country: updatedPage.country,
+          location: updatedPage.location,
+          description: updatedPage.description,
+          seasonality: updatedPage.seasonality,
+          time: updatedPage.time,
+          visitors: updatedPage.visitors
+        }
+      }
+      const result = await spotCollection.updateOne(filter, spots, options);
+      res.send(result)
+    })
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
