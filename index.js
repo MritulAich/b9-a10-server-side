@@ -46,11 +46,11 @@ async function run() {
       res.send(result);
     })
 
-    
+
     //Delete
-    app.delete('/spot/:id', async(req, res)=>{
+    app.delete('/spot/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await spotCollection.deleteOne(query);
       res.send(result);
     })
@@ -67,7 +67,7 @@ async function run() {
     app.put('/spot/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
-      const options = {upsert: true };
+      const options = { upsert: true };
       const updatedPage = req.body;
 
       const spots = {
@@ -90,11 +90,18 @@ async function run() {
 
     const countryCollection = client.db('spotDB').collection('countries');
 
-    app.get('/countries', async(req, res)=>{
+    app.get('/countries', async (req, res) => {
       const cursor = countryCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
+
+    app.get('/countries/:id', async (req, res) => {
+      const countryId = req.params.id;
+      const country = await countryCollection.findOne({ _id: countryId});
+      res.send(country)
+    })
+
 
 
 
