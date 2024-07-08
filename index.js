@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
 
     //Create
@@ -46,6 +46,7 @@ async function run() {
       res.send(result);
     })
 
+    
     //Delete
     app.delete('/spot/:id', async(req, res)=>{
       const id = req.params.id;
@@ -87,6 +88,15 @@ async function run() {
     })
 
 
+    const countryCollection = client.db('spotDB').collection('countries');
+
+    app.get('/countries', async(req, res)=>{
+      const cursor = countryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -101,7 +111,7 @@ run().catch(console.dir);
 
 
 app.get('/', (rew, res) => {
-  res.send('server-side is running')
+  res.send('trip-voyage is running')
 })
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
